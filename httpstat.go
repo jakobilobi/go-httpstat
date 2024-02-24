@@ -1,5 +1,6 @@
-// Package httpstat traces HTTP latency infomation (DNSLookup, TCP Connection and so on) on any golang HTTP request.
-// It uses `httptrace` package. Just create `go-httpstat` powered `context.Context` and give it your `http.Request` (no big code modification is required).
+// Package httpstat traces HTTP latency infomation (DNSLookup, TCP Connection and so on) on any Golang HTTP request.
+// It uses the `httptrace` package, just create a `go-httpstat` powered `context.Context` and give it your `http.Request`
+// to gain access to the latency information of the request.
 package httpstat
 
 import (
@@ -11,16 +12,16 @@ import (
 	"time"
 )
 
-// Result stores httpstat info.
+// Result stores httpstat information.
 type Result struct {
-	// The following are duration for each phase
+	// The following are the durations for each phase
 	DNSLookup        time.Duration
 	TCPConnection    time.Duration
 	TLSHandshake     time.Duration
 	ServerProcessing time.Duration
 	contentTransfer  time.Duration
 
-	// The followings are timeline of request
+	// The following is the timeline of a request
 	NameLookup    time.Duration
 	Connect       time.Duration
 	Pretransfer   time.Duration
@@ -32,7 +33,7 @@ type Result struct {
 	t2 time.Time
 	t3 time.Time
 	t4 time.Time
-	t5 time.Time // need to be provided from outside
+	t5 time.Time // Needs to be provided from outside of httpstat
 
 	dnsStart      time.Time
 	tcpStart      time.Time
@@ -40,12 +41,12 @@ type Result struct {
 	serverStart   time.Time
 	serverDone    time.Time
 	transferStart time.Time
-	transferDone  time.Time // need to be provided from outside
+	transferDone  time.Time // Needs to be provided from outside of httpstat
 
-	// isTLS is true when connection seems to use TLS
+	// isTLS is true when the connection seems to use TLS
 	isTLS bool
 
-	// isReused is true when connection is reused (keep-alive)
+	// isReused is true when the connection is reused (keep-alive)
 	isReused bool
 }
 
@@ -120,11 +121,10 @@ func (r Result) Format(s fmt.State, verb rune) {
 		}
 		io.WriteString(s, strings.Join(list, ", "))
 	}
-
 }
 
 // WithHTTPStat is a wrapper of httptrace.WithClientTrace. It records the
-// time of each httptrace hooks.
+// time of each httptrace hook.
 func WithHTTPStat(ctx context.Context, r *Result) context.Context {
 	return withClientTrace(ctx, r)
 }

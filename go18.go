@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-// End sets the time when reading response is done.
-// This must be called after reading response body.
+// End sets the time when reading the response is done.
+// This must be called after reading the response body.
 func (r *Result) End(t time.Time) {
 	r.transferDone = t
 
@@ -53,7 +53,7 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 		ConnectStart: func(_, _ string) {
 			r.tcpStart = time.Now()
 
-			// When connecting to IP (When no DNS lookup)
+			// When connecting to IP (e.g. there's no DNS lookup)
 			if r.dnsStart.IsZero() {
 				r.dnsStart = r.tcpStart
 			}
@@ -75,8 +75,8 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 		},
 
 		GotConn: func(i httptrace.GotConnInfo) {
-			// Handle when keep alive is used and connection is reused.
-			// DNSStart(Done) and ConnectStart(Done) is skipped
+			// Handle when keep alive is used and the connection is reused.
+			// DNSStart(Done) and ConnectStart(Done) is then skipped.
 			if i.Reused {
 				r.isReused = true
 			}
@@ -94,7 +94,7 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				r.tcpStart = now
 			}
 
-			// When connection is re-used, DNS/TCP/TLS hook is not called.
+			// When connection is re-used, DNS/TCP/TLS hooks are not called.
 			if r.isReused {
 				now := r.serverStart
 
