@@ -13,16 +13,14 @@ import (
 // End sets the time when reading the response is done.
 // This must be called after reading the response body.
 func (r *Result) End(t time.Time) {
-	r.transferDone = t
-
-	// This means result is empty (it does nothing).
-	// Skip setting value(contentTransfer and total will be zero).
+	// This means the result is empty, and we'll skip
+	// setting values for contentTransfer and total.
 	if r.dnsStart.IsZero() {
 		return
 	}
 
-	r.contentTransfer = r.transferDone.Sub(r.transferStart)
-	r.total = r.transferDone.Sub(r.dnsStart)
+	r.contentTransfer = time.Since(r.transferStart)
+	r.total = time.Since(r.dnsStart)
 }
 
 // ContentTransfer returns the duration of content transfer time.

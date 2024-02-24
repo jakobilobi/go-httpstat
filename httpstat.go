@@ -41,7 +41,6 @@ type Result struct {
 	serverStart   time.Time
 	serverDone    time.Time
 	transferStart time.Time
-	transferDone  time.Time // Needs to be provided from outside of httpstat
 
 	// isTLS is true when the connection seems to use TLS
 	isTLS bool
