@@ -44,6 +44,12 @@ func (r *Result) Total() time.Duration {
 	return r.total
 }
 
+// Until returns the duration of the http request until time t.
+// Measured from the DNS lookup start time to the given time.
+func (r *Result) Until(t time.Time) time.Duration {
+	return t.Sub(r.dnsStart)
+}
+
 func withClientTrace(ctx context.Context, r *Result) context.Context {
 	return httptrace.WithClientTrace(ctx, &httptrace.ClientTrace{
 		DNSStart: func(i httptrace.DNSStartInfo) {
