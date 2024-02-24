@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/tcnksm/go-httpstat"
+	"github.com/jakobilobi/go-httpstat"
 )
 
 func main() {
@@ -32,11 +30,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
+	if _, err := io.Copy(io.Discard, res.Body); err != nil {
 		log.Fatal(err)
 	}
 	res.Body.Close()
-	result.End(time.Now())
+	result.End()
 
 	fmt.Printf("%+v\n", result)
 }
