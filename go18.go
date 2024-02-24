@@ -60,10 +60,8 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 		},
 
 		ConnectDone: func(network, addr string, err error) {
-			r.tcpDone = time.Now()
-
-			r.TCPConnection = r.tcpDone.Sub(r.tcpStart)
-			r.Connect = r.tcpDone.Sub(r.dnsStart)
+			r.TCPConnection = time.Since(r.tcpStart)
+			r.Connect = time.Since(r.dnsStart)
 		},
 
 		TLSHandshakeStart: func() {
@@ -96,7 +94,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 
 				r.dnsStart = now
 				r.tcpStart = now
-				r.tcpDone = now
 			}
 
 			// When connection is re-used, DNS/TCP/TLS hook is not called.
@@ -105,7 +102,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 
 				r.dnsStart = now
 				r.tcpStart = now
-				r.tcpDone = now
 				r.tlsStart = now
 				r.tlsDone = now
 			}
@@ -114,7 +110,7 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				return
 			}
 
-			r.TLSHandshake = r.tcpDone.Sub(r.tcpDone)
+			r.TLSHandshake = time.Duration(0)
 			r.Pretransfer = r.Connect
 		},
 

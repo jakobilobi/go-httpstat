@@ -36,7 +36,6 @@ type Result struct {
 
 	dnsStart      time.Time
 	tcpStart      time.Time
-	tcpDone       time.Time
 	tlsStart      time.Time
 	tlsDone       time.Time
 	serverStart   time.Time
