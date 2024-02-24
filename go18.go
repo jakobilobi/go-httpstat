@@ -101,10 +101,10 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				r.tlsStart = now
 			}
 
+			// If no TLS, TLSHandshake is zero and Pretransfer is equal to Connect.
 			if r.isTLS {
 				return
 			}
-
 			r.TLSHandshake = time.Duration(0)
 			r.Pretransfer = r.Connect
 		},
