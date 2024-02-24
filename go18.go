@@ -12,7 +12,7 @@ import (
 
 // End sets the time when reading the response is done.
 // This must be called after reading the response body.
-func (r *Result) End(t time.Time) {
+func (r *Result) End() {
 	// This means the result is empty, and we'll skip
 	// setting values for contentTransfer and total.
 	if r.dnsStart.IsZero() {

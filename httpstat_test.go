@@ -61,7 +61,7 @@ func TestHTTPStat_HTTPS(t *testing.T) {
 		t.Fatal("io.Copy failed:", err)
 	}
 	res.Body.Close()
-	result.End(time.Now())
+	result.End()
 
 	if !result.isTLS {
 		t.Fatal("isTLS should be true")
@@ -88,7 +88,7 @@ func TestHTTPStat_HTTP(t *testing.T) {
 		t.Fatal("io.Copy failed:", err)
 	}
 	res.Body.Close()
-	result.End(time.Now())
+	result.End()
 
 	if result.isTLS {
 		t.Fatal("isTLS should be false")
@@ -139,7 +139,7 @@ func TestHTTPStat_KeepAlive(t *testing.T) {
 		t.Fatal("Copy body failed:", err)
 	}
 	res2.Body.Close()
-	result.End(time.Now())
+	result.End()
 
 	// The following values should be zero.
 	// Because connection is reused.
@@ -183,7 +183,7 @@ func TestHTTPStat_beforeGO17(t *testing.T) {
 		t.Fatal("io.Copy failed:", err)
 	}
 	res.Body.Close()
-	result.End(time.Now())
+	result.End()
 
 	// The following values are not mesured.
 	durations := []time.Duration{
@@ -201,7 +201,7 @@ func TestHTTPStat_beforeGO17(t *testing.T) {
 
 func TestTotal_Zero(t *testing.T) {
 	result := &Result{}
-	result.End(time.Now())
+	result.End()
 
 	zero := 0 * time.Millisecond
 	if result.total != zero {
@@ -235,7 +235,7 @@ func TestContentTransfer(t *testing.T) {
 	}
 
 	// Call End() to mark end of HTTP request (usually done right after reading response body).
-	result.End(time.Now())
+	result.End()
 
 	// Expect content transfer times to be equal when called after End().
 	ct1 = result.ContentTransfer()
@@ -268,7 +268,7 @@ func TestTotal(t *testing.T) {
 	}
 
 	// Call End() to mark end of HTTP request (usually done right after reading response body).
-	result.End(time.Now())
+	result.End()
 
 	// Expect total times to be equal when called after End().
 	total1 = result.Total()
