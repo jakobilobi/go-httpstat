@@ -70,10 +70,8 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 		},
 
 		TLSHandshakeDone: func(_ tls.ConnectionState, _ error) {
-			r.tlsDone = time.Now()
-
-			r.TLSHandshake = r.tlsDone.Sub(r.tlsStart)
-			r.Pretransfer = r.tlsDone.Sub(r.dnsStart)
+			r.TLSHandshake = time.Since(r.tlsStart)
+			r.Pretransfer = time.Since(r.dnsStart)
 		},
 
 		GotConn: func(i httptrace.GotConnInfo) {
@@ -103,7 +101,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				r.dnsStart = now
 				r.tcpStart = now
 				r.tlsStart = now
-				r.tlsDone = now
 			}
 
 			if r.isTLS {
