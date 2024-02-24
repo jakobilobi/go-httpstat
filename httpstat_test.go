@@ -213,6 +213,72 @@ func TestTotal_Zero(t *testing.T) {
 	}
 }
 
+func TestContentTransfer(t *testing.T) {
+	var result Result
+	req := NewRequest(t, TestDomainHTTPS, &result)
+	client := DefaultClient()
+	res, err := client.Do(req)
+	if err != nil {
+		t.Fatal("client.Do failed:", err)
+	}
+	if _, err := io.Copy(io.Discard, res.Body); err != nil {
+		t.Fatal("io.Copy failed:", err)
+	}
+	res.Body.Close()
+
+	// Expect content transfer times to be inequal when called before End().
+	ct1 := result.ContentTransfer()
+	time.Sleep(10 * time.Millisecond)
+	ct2 := result.ContentTransfer()
+	if ct1 == ct2 {
+		t.Fatalf("ContentTransfer times are %d and %d, but they should not be equal.", ct1, ct2)
+	}
+
+	// Call End() to mark end of HTTP request (usually done right after reading response body).
+	result.End(time.Now())
+
+	// Expect content transfer times to be equal when called after End().
+	ct1 = result.ContentTransfer()
+	time.Sleep(10 * time.Millisecond)
+	ct2 = result.ContentTransfer()
+	if ct1 != ct2 {
+		t.Fatalf("ContentTransfer times are %d and %d, but they should be equal.", ct1, ct2)
+	}
+}
+
+func TestTotal(t *testing.T) {
+	var result Result
+	req := NewRequest(t, TestDomainHTTPS, &result)
+	client := DefaultClient()
+	res, err := client.Do(req)
+	if err != nil {
+		t.Fatal("client.Do failed:", err)
+	}
+	if _, err := io.Copy(io.Discard, res.Body); err != nil {
+		t.Fatal("io.Copy failed:", err)
+	}
+	res.Body.Close()
+
+	// Expect total times to be inequal when called before End().
+	total1 := result.Total()
+	time.Sleep(10 * time.Millisecond)
+	total2 := result.Total()
+	if total1 == total2 {
+		t.Fatalf("Total times are %d and %d, but they should not be equal.", total1, total2)
+	}
+
+	// Call End() to mark end of HTTP request (usually done right after reading response body).
+	result.End(time.Now())
+
+	// Expect total times to be equal when called after End().
+	total1 = result.Total()
+	time.Sleep(10 * time.Millisecond)
+	total2 = result.Total()
+	if total1 != total2 {
+		t.Fatalf("Total times are %d and %d, but they should be equal.", total1, total2)
+	}
+}
+
 func TestHTTPStat_Formatter(t *testing.T) {
 	result := Result{
 		DNSLookup:        100 * time.Millisecond,

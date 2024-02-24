@@ -18,23 +18,30 @@ func (r *Result) End(t time.Time) {
 	if r.dnsStart.IsZero() {
 		return
 	}
-
 	r.contentTransfer = time.Since(r.transferStart)
 	r.total = time.Since(r.dnsStart)
 }
 
 // ContentTransfer returns the duration of content transfer time.
-// It is from first response byte to the given time. The time must
-// be time after read body (go-httpstat can not detect that time).
-func (r *Result) ContentTransfer(t time.Time) time.Duration {
-	return t.Sub(r.serverDone)
+// If the request is finished it returns the content transfer time,
+// otherwise it returns the duration from the first response byte
+// until when the function was called.
+func (r *Result) ContentTransfer() time.Duration {
+	if r.contentTransfer == 0 {
+		return time.Since(r.serverDone)
+	}
+	return r.contentTransfer
 }
 
-// Total returns the duration of total http request.
-// It is from dns lookup start time to the given time. The
-// time must be time after read body (go-httpstat can not detect that time).
-func (r *Result) Total(t time.Time) time.Duration {
-	return t.Sub(r.dnsStart)
+// Total returns the duration of the total http request.
+// If the request is finished it returns the total time,
+// otherwise it returns the duration from the DNS lookup
+// start time until when the function was called.
+func (r *Result) Total() time.Duration {
+	if r.total == 0 {
+		return time.Since(r.dnsStart)
+	}
+	return r.total
 }
 
 func withClientTrace(ctx context.Context, r *Result) context.Context {
