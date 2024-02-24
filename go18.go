@@ -45,10 +45,8 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 		},
 
 		DNSDone: func(i httptrace.DNSDoneInfo) {
-			r.dnsDone = time.Now()
-
-			r.DNSLookup = r.dnsDone.Sub(r.dnsStart)
-			r.NameLookup = r.dnsDone.Sub(r.dnsStart)
+			r.DNSLookup = time.Since(r.dnsStart)
+			r.NameLookup = time.Since(r.dnsStart)
 		},
 
 		ConnectStart: func(_, _ string) {
@@ -57,7 +55,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 			// When connecting to IP (When no DNS lookup)
 			if r.dnsStart.IsZero() {
 				r.dnsStart = r.tcpStart
-				r.dnsDone = r.tcpStart
 			}
 		},
 
@@ -97,7 +94,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				now := r.serverStart
 
 				r.dnsStart = now
-				r.dnsDone = now
 				r.tcpStart = now
 				r.tcpDone = now
 			}
@@ -107,7 +103,6 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 				now := r.serverStart
 
 				r.dnsStart = now
-				r.dnsDone = now
 				r.tcpStart = now
 				r.tcpDone = now
 				r.tlsStart = now

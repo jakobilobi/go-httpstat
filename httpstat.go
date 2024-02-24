@@ -35,7 +35,6 @@ type Result struct {
 	t5 time.Time // need to be provided from outside
 
 	dnsStart      time.Time
-	dnsDone       time.Time
 	tcpStart      time.Time
 	tcpDone       time.Time
 	tlsStart      time.Time
