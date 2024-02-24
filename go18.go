@@ -111,11 +111,10 @@ func withClientTrace(ctx context.Context, r *Result) context.Context {
 
 		GotFirstResponseByte: func() {
 			r.serverDone = time.Now()
+			r.ServerProcessing = time.Since(r.serverStart)
 
-			r.ServerProcessing = r.serverDone.Sub(r.serverStart)
-			r.StartTransfer = r.serverDone.Sub(r.dnsStart)
-
-			r.transferStart = r.serverDone
+			r.transferStart = time.Now()
+			r.StartTransfer = time.Since(r.dnsStart)
 		},
 	})
 }
